@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CS61A Grade Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav><div class="navin">
+  <div class="links"><a href="#results">Results</a><a href="#exams">Exams</a><a href="#quizzes">Quizzes</a><a href="#coursework">Coursework</a><a href="#need">Needs</a><a href="https://cs61a.org/" target="_blank" rel="noopener">Syllabus ↗</a></div>
+  <div class="chip"><b id="miniL">–</b><span id="miniR"></span></div>
+</div></nav>
+<main>
+  <div><h1>CS61A grade calculator</h1>
+  <p class="sub">Type your scores in the boxes and leave the rest blank. Scores above the maximum are fine.</p>
+  <p class="sub">*This is an unofficial calculator, so check the <a href="https://cs61a.org/" target="_blank" rel="noopener">official syllabus</a> for the exact rules.</p></div>
+
+  <section class="card" id="results"><div id="hero"></div></section>
+
+  <section class="card" id="exams"><h2>Exams</h2><p class="hint">Leave blank if you haven’t taken it yet. Got the A+ question? Add 5 to your score (like 25 out of 20).</p><div id="examsIn"></div></section>
+  <section class="card" id="quizzes"><h2>Quizzes</h2><p class="hint">Best 5 of 8 count, each worth 2 points.</p><div class="quizzes" id="quizIn"></div></section>
+  <section class="card" id="coursework"><h2>Coursework</h2><p class="hint">Type points earned. For unfinished homework, lab or discussion, add how many points are graded so far. Leave a project blank until it’s graded.</p><div id="parts"></div></section>
+
+  <section class="card" id="need"><h2>How far to each grade</h2>
+    <div class="chips" id="chips" role="group" aria-label="Choose a letter grade"></div>
+    <div class="slide"><span>I expect</span><input type="range" id="pct" min="0" max="100" value="90" aria-label="Expected percent on remaining work"><b id="pctv">90%</b></div>
+    <p class="hint">on all remaining work except the final.</p>
+    <div id="needList"></div><p class="note" id="note"></p></section>
+  <button class="btn" id="reset" type="button">Clear all fields</button>
+  <p class="disclaimer">Unofficial calculator. Point values, cutoffs, A+ rules and extra credit can change between semesters, and this page may not match them exactly. For the accurate policy, open the Syllabus page on the <a href="https://cs61a.org/" target="_blank" rel="noopener">official CS 61A website</a>. If anything here differs, the syllabus wins.</p>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
