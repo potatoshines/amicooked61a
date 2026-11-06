@@ -95,6 +95,12 @@ a:focus-visible,button:focus-visible,input[type=range]:focus-visible{outline:2px
 .btn{align-self:center;padding:9px 18px;border:1.5px solid var(--fieldline);background:transparent;color:var(--ink);border-radius:999px;font:inherit;cursor:pointer}
 .btn:hover{background:var(--soft)}
 
+.card{position:relative}
+.mx{position:absolute;top:16px;right:16px;width:20px;height:20px;border-radius:50%;border:1px solid var(--fieldline);background:var(--soft);color:var(--matchad);font-size:9px;line-height:1;cursor:pointer;padding:0;transition:transform .15s,background .15s}
+.mx:hover{background:var(--matcha);color:var(--onm);transform:scale(1.08)}
+.mx[aria-pressed="true"]{background:var(--matcha);border-color:var(--matcha);color:var(--onm)}
+.mx:hover::after,.mx:focus-visible::after{content:attr(data-tip);position:absolute;top:calc(100% + 8px);right:0;background:var(--ink);color:var(--card);padding:5px 10px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;z-index:5;font-family:inherit;transform:none;animation:tipin .15s ease .6s both}
+@keyframes tipin{from{opacity:0}to{opacity:1}}
 .row.repl{border-top:1px dashed var(--line);margin-top:4px}
 .rlabel{display:flex;align-items:center;gap:10px;flex:1;font-weight:500}
 .sw{position:relative;width:40px;height:22px;border-radius:999px;border:0;background:var(--fieldline);cursor:pointer;flex:none;padding:0;transition:background .2s}

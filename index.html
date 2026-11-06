@@ -21,11 +21,11 @@
 
   <section class="card" id="results"><div id="hero"></div></section>
 
-  <section class="card" id="exams"><h2>Exams</h2><p class="hint">Leave blank if you haven’t taken it yet. Got the A+ question? Add 5 to your score (like 25 out of 20).</p><div id="examsIn"></div>
+  <section class="card" id="exams"><button type="button" class="mx" data-s="exams" data-tip="Fill exams with full marks · click again to undo" aria-label="Fill exams with full marks" aria-pressed="false">✦</button><h2>Exams</h2><p class="hint">Leave blank if you haven’t taken it yet. Got the A+ question? Add 5 to your score (like 25 out of 20).</p><div id="examsIn"></div>
     <div class="row repl"><div class="rlabel"><button type="button" class="sw" id="sw" role="switch" aria-checked="true" aria-label="Midterm recovery"></button><span>Midterm recovery</span><button type="button" class="q" id="qb" aria-expanded="false" aria-controls="qtxt" aria-label="What is midterm recovery?">?</button></div></div>
     <p class="qtxt" id="qtxt" hidden>Your final can pull your midterms up. Each midterm counts for at least 90% of your final exam percentage. Example: 5/20 on Midterm 1 and 37.5/75 (50%) on the final gives 50% × 90% × 20 = 9/20, so you get 4 points back. It only kicks in once your final is entered, and the “final needed” numbers below include it. The small green +n beside a midterm is how many points it gained, with its new score underneath. Turn it off if you don’t want it counted.</p></section>
-  <section class="card" id="quizzes"><h2>Quizzes</h2><p class="hint">Best 5 of 8 count, each worth 2 points.</p><div class="quizzes" id="quizIn"></div></section>
-  <section class="card" id="coursework"><h2>Coursework</h2><p class="hint">Type points earned. For unfinished homework, lab or discussion, add how many points are graded so far. Leave a project blank until it’s graded.</p><div id="parts"></div></section>
+  <section class="card" id="quizzes"><button type="button" class="mx" data-s="quizzes" data-tip="Fill quizzes with full marks · click again to undo" aria-label="Fill quizzes with full marks" aria-pressed="false">✦</button><h2>Quizzes</h2><p class="hint">Best 5 of 8 count, each worth 2 points.</p><div class="quizzes" id="quizIn"></div></section>
+  <section class="card" id="coursework"><button type="button" class="mx" data-s="coursework" data-tip="Fill homework, lab and discussion with full marks · click again to undo" aria-label="Fill homework, lab and discussion with full marks" aria-pressed="false">✦</button><h2>Coursework</h2><p class="hint">Type points earned. For unfinished homework, lab or discussion, add how many points are graded so far. Leave a project blank until it’s graded.</p><div id="parts"></div></section>
 
   <section class="card" id="need"><h2>How far to each grade</h2>
     <div class="chips" id="chips" role="group" aria-label="Choose a letter grade"></div>

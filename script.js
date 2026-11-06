@@ -3,7 +3,7 @@ const GRADES=[["A+",APLUS],["A",285],["A-",270],["B+",255],["B",230],["B-",210],
 const EXAMS=[["m1","Midterm 1",20],["m2","Midterm 2",20],["m3","Midterm 3",45],["fin","Final",75]];
 const PART=[["hw","Homework",10],["lab","Lab",10],["disc","Discussion",10]];
 const PROJ=4,PMAX=25;
-const PROJROW=`<div class="row pj"><label>Projects<small>each out of ${PMAX}, write ${PMAX+1} if you got early-submission extra credit</small></label><div class="quizzes">${Array.from({length:PROJ},(_,i)=>`<input type="number" id="p${i}" min="0" step="any" inputmode="decimal" aria-label="Project ${i+1}" placeholder="P${i+1}">`).join("")}</div></div>`;
+const PROJROW=`<div class="row pj"><label>Projects<small>total out of ${PMAX*PROJ}, add 1 to a project if you got the early-submission bonus</small></label><div class="quizzes">${Array.from({length:PROJ},(_,i)=>`<input type="number" id="p${i}" min="0" step="any" inputmode="decimal" aria-label="Project ${i+1}" placeholder="P${i+1}">`).join("")}</div></div>`;
 const $=id=>document.getElementById(id);
 const letter=p=>{for(const[g,c]of GRADES.slice(1))if(p>=c)return g;return "F"};
 const fmt=x=>(Math.round(x*10)/10).toString();
@@ -17,6 +17,19 @@ let repl=true;try{repl=localStorage.getItem("cs61a-repl")!=="0"}catch(e){}
 const syncRepl=()=>$("sw").setAttribute("aria-checked",String(repl));
 $("sw").onclick=()=>{repl=!repl;try{localStorage.setItem("cs61a-repl",repl?"1":"0")}catch(x){}syncRepl();render()};
 $("qb").onclick=()=>{const t=$("qtxt");t.hidden=!t.hidden;$("qb").setAttribute("aria-expanded",String(!t.hidden))};
+
+const FILL={
+  exams:()=>EXAMS.map(([k,,m])=>[k,m]),
+  quizzes:()=>Array.from({length:QN},(_,i)=>["q"+i,QMAX]),
+  coursework:()=>PART.flatMap(([k,,m])=>[[k+"e",m],[k+"d",m]])
+};
+const undo={};
+document.querySelectorAll(".mx").forEach(b=>b.onclick=()=>{
+  const s=b.dataset.s,list=FILL[s]();
+  if(undo[s]){undo[s].forEach(([id,v])=>$(id).value=v);delete undo[s];b.setAttribute("aria-pressed","false")}
+  else{undo[s]=list.map(([id])=>[id,$(id).value]);list.forEach(([id,v])=>$(id).value=v);b.setAttribute("aria-pressed","true")}
+  save();render();
+});
 
 $("examsIn").innerHTML=EXAMS.map(([k,n,m])=>`<div class="row"><label for="${k}">${n}<small>out of ${m}</small></label><div class="pair"><span class="apm" id="am_${k}" aria-hidden="true"></span><input type="number" id="${k}" min="0" step="any" inputmode="decimal" placeholder="—"><span class="nt" id="nt_${k}" aria-hidden="true"></span></div></div>`).join("");
 $("quizIn").innerHTML=Array.from({length:QN},(_,i)=>`<input type="number" id="q${i}" min="0" step="any" inputmode="decimal" aria-label="Quiz ${i+1}" placeholder="Q${i+1}">`).join("");
@@ -101,5 +114,5 @@ function render(){
 }
 document.addEventListener("input",()=>{save();render()});
 document.addEventListener("change",()=>{save();render()});
-$("reset").onclick=()=>{ids().forEach(i=>{if(i==="pct")return;if($(i).type==="checkbox")$(i).checked=false;else $(i).value=""});save();render()};
+$("reset").onclick=()=>{ids().forEach(i=>{if(i==="pct")return;if($(i).type==="checkbox")$(i).checked=false;else $(i).value=""});Object.keys(undo).forEach(k=>delete undo[k]);document.querySelectorAll(".mx").forEach(b=>b.setAttribute("aria-pressed","false"));save();render()};
 load();sync();syncRepl();render();
