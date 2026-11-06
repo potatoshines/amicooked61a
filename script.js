@@ -13,7 +13,12 @@ const sync=()=>document.querySelectorAll(".pill").forEach(b=>b.setAttribute("ari
 $("chips").innerHTML=["A","B","C","D","All"].map(g=>`<button type="button" class="pill" data-g="${g}">${g==="All"?"All grades":g}</button>`).join("");
 $("chips").onclick=e=>{const b=e.target.closest("button");if(!b)return;grp=b.dataset.g;try{localStorage.setItem("cs61a-grp",grp)}catch(x){}sync();render()};
 
-$("examsIn").innerHTML=EXAMS.map(([k,n,m])=>`<div class="row"><label for="${k}">${n}<small>out of ${m}</small></label><div class="pair"><span class="apm" id="am_${k}" aria-hidden="true">A+</span><input type="number" id="${k}" min="0" step="any" inputmode="decimal" placeholder="—"></div></div>`).join("");
+let repl=true;try{repl=localStorage.getItem("cs61a-repl")!=="0"}catch(e){}
+const syncRepl=()=>$("sw").setAttribute("aria-checked",String(repl));
+$("sw").onclick=()=>{repl=!repl;try{localStorage.setItem("cs61a-repl",repl?"1":"0")}catch(x){}syncRepl();render()};
+$("qb").onclick=()=>{const t=$("qtxt");t.hidden=!t.hidden;$("qb").setAttribute("aria-expanded",String(!t.hidden))};
+
+$("examsIn").innerHTML=EXAMS.map(([k,n,m])=>`<div class="row"><label for="${k}">${n}<small>out of ${m}</small></label><div class="pair"><span class="apm" id="am_${k}" aria-hidden="true"></span><input type="number" id="${k}" min="0" step="any" inputmode="decimal" placeholder="—"><span class="nt" id="nt_${k}" aria-hidden="true"></span></div></div>`).join("");
 $("quizIn").innerHTML=Array.from({length:QN},(_,i)=>`<input type="number" id="q${i}" min="0" step="any" inputmode="decimal" aria-label="Quiz ${i+1}" placeholder="Q${i+1}">`).join("");
 $("parts").innerHTML=PART.map(([k,n,m])=>`<div class="row"><label>${n}<small>out of ${m}</small></label><div class="pair"><input type="number" id="${k}e" min="0" step="any" inputmode="decimal" aria-label="${n} earned" placeholder="earned"> / <input type="number" id="${k}d" min="0" step="any" inputmode="decimal" aria-label="${n} graded so far" placeholder="graded"></div></div>`).join("")+PROJROW+`<div class="row opt"><label for="ct">Contest A+ points<small>optional contests</small></label><input type="number" id="ct" min="0" step="any" inputmode="decimal" placeholder="0"></div>`;
 
@@ -26,6 +31,11 @@ function calc(){
   const bad=v=>Number.isNaN(v)||(v!==null&&v<0);
   for(const[k,n,m]of EXAMS){const v=num(k);if(bad(v)){err.push(`${n}: enter a number, 0 or more.`);continue}
     const a=v!==null&&v>=m+AQ;if(a)aqn++;earned[k]=(v??0)-(a?AQ:0);rem[k]=v===null?m:0}
+  let recov=0;const gains={};
+  if(repl&&rem.fin===0&&earned.fin!==undefined){
+    const fp=Math.min(1,earned.fin/EXAMS[3][2]);
+    for(const[k,,m]of EXAMS.slice(0,3)){if(rem[k]===0&&earned[k]!==undefined){const g=Math.max(0,0.9*fp*m-earned[k]);earned[k]+=g;recov+=g;gains[k]=g}}
+  }
   const sc=[];
   for(let i=0;i<QN;i++){const v=num("q"+i);if(bad(v)){err.push(`Quiz ${i+1}: enter a number, 0 or more.`);continue}if(v!==null)sc.push(v)}
   const best=[...sc].sort((a,b)=>b-a).slice(0,QK);
@@ -45,21 +55,27 @@ function calc(){
   const aq=aqn;
   
   if(bad(ct))err.push("Contest points: enter a number, 0 or more.");
-  return err.length?{err}:{earned,rem,aq,ct:ct??0};
+  return err.length?{err}:{earned,rem,aq,ct:ct??0,gains};
 }
 
 function render(){
   const pct=Number($("pct").value)/100;$("pctv").textContent=Math.round(pct*100)+"%";
-  EXAMS.forEach(([k,,m])=>{const v=num(k);$("am_"+k).classList.toggle("on",v!==null&&v>=m+AQ)});
+  EXAMS.forEach(([k,,m])=>{const v=num(k),a=v!==null&&v>=m+AQ,el=$("am_"+k);el.textContent=a?"A+":"";el.className="apm"+(a?" on":"");$("nt_"+k).textContent=""});
   const r=calc();
   if(r.err){$("hero").innerHTML=r.err.map(e=>`<p class="err">${e}</p>`).join("");$("needList").innerHTML="";$("note").textContent="";return}
-  const{earned,rem,aq,ct}=r;
+  const{earned,rem,aq,ct,gains}=r;
+  EXAMS.forEach(([k,,m])=>{const g=gains[k];if(g>0.05){const el=$("am_"+k);el.textContent="+"+fmt(g);el.className="apm on soft";$("nt_"+k).textContent="→ "+fmt(earned[k])}});
   const cur=Object.values(earned).reduce((a,b)=>a+b,0);
   const ap=cur+aq*AQ+ct;
   const finalLeft=rem.fin;
   const otherLeft=Object.entries(rem).filter(([k])=>k!=="fin").reduce((a,[,v])=>a+v,0);
   const ecLeft=rem.pr/PMAX;
-  const maxAp=ap+finalLeft+otherLeft+ecLeft;
+  const mids=EXAMS.slice(0,3).filter(([k])=>rem[k]===0);
+  const useRepl=repl&&finalLeft>0;
+  const midBest=useRepl?mids.reduce((s,[k,,m])=>s+Math.max(0,0.9*m-earned[k]),0):0;
+  const gainAt=x=>x+(useRepl?mids.reduce((s,[k,,m])=>s+Math.max(0,0.9*Math.min(x/finalLeft,1)*m-earned[k]),0):0);
+  const solveFinal=t=>{if(t<=0)return 0;let lo=0,hi=400;for(let i=0;i<50;i++){const mid=(lo+hi)/2;if(gainAt(mid)>=t)hi=mid;else lo=mid}return hi};
+  const maxAp=ap+finalLeft+otherLeft+ecLeft+midBest;
   const exp=otherLeft*pct;
   const grade=ap>=APLUS?"A+":letter(cur);
   const nxt=[...GRADES].reverse().find(([g,c])=>c>(g==="A+"?ap:cur));
@@ -77,7 +93,7 @@ function render(){
     const have=g==="A+"?ap:cur,need=c-have,w=Math.min(100,Math.max(0,have/c*100));
     if(need<=0)return `<div class="need done"><div class="g">${g}</div><div><div class="meter"><i style="width:100%"></i></div><p class="ok">Secured</p></div></div>`;
     let t;
-    if(finalLeft>0){const f=need-exp;
+    if(finalLeft>0){const f=solveFinal(need-exp);
       t=f<=0?`<b>${fmt(need)}</b> more &middot; <span class="ok">any final score works</span>`:`<b>${fmt(need)}</b> more &middot; final <b class="${f>finalLeft?"bad":""}">${fmt(f)}+</b>`}
     else{const avail=otherLeft+ecLeft;t=`<b>${fmt(need)}</b> more &middot; ${need>avail?`<span class="bad">out of reach</span>`:`${Math.round(need/avail*100)}% of what’s left`}`}
     return `<div class="need"><div class="g">${g}</div><div><div class="meter"><i style="width:${w}%"></i></div><p>${t}</p></div></div>`}).join("");
@@ -86,4 +102,4 @@ function render(){
 document.addEventListener("input",()=>{save();render()});
 document.addEventListener("change",()=>{save();render()});
 $("reset").onclick=()=>{ids().forEach(i=>{if(i==="pct")return;if($(i).type==="checkbox")$(i).checked=false;else $(i).value=""});save();render()};
-load();sync();render();
+load();sync();syncRepl();render();

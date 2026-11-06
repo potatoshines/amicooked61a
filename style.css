@@ -58,8 +58,9 @@ a:focus-visible,button:focus-visible,input[type=range]:focus-visible{outline:2px
 .row.sub small{display:inline;margin-left:12px;font-size:12px}
 .row.sub input[type=number]{margin-left:auto;width:52px;padding:3px 6px;border:1px solid var(--line);background:transparent;border-radius:8px;font-size:14px;opacity:.85}
 .row.sub input[type=number]:focus{border-color:var(--matcha);opacity:1}
-.apm{font-size:11px;font-weight:700;color:var(--matchad);visibility:hidden}
+.apm{display:inline-block;min-width:40px;text-align:right;white-space:nowrap;font-size:11px;font-weight:700;color:var(--matchad);visibility:hidden}
 .apm.on{visibility:visible}
+.apm.soft{color:var(--matcha);opacity:.75;font-weight:600}
 .apx{margin-left:auto;font-size:12px;white-space:nowrap}
 .apx .apsum{color:var(--mute);margin-right:8px}
 .apx b{color:var(--matchad);font-weight:700;font-size:13px}
@@ -93,3 +94,16 @@ a:focus-visible,button:focus-visible,input[type=range]:focus-visible{outline:2px
 .note{color:var(--mute);font-size:13px;margin:12px 0 0}
 .btn{align-self:center;padding:9px 18px;border:1.5px solid var(--fieldline);background:transparent;color:var(--ink);border-radius:999px;font:inherit;cursor:pointer}
 .btn:hover{background:var(--soft)}
+
+.row.repl{border-top:1px dashed var(--line);margin-top:4px}
+.rlabel{display:flex;align-items:center;gap:10px;flex:1;font-weight:500}
+.sw{position:relative;width:40px;height:22px;border-radius:999px;border:0;background:var(--fieldline);cursor:pointer;flex:none;padding:0;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--card);transition:transform .2s}
+.sw[aria-checked="true"]{background:var(--matcha)}
+.sw[aria-checked="true"]::after{transform:translateX(18px)}
+.q{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--fieldline);background:transparent;color:var(--mute);font:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:0;line-height:1}
+.q:hover{background:var(--soft)}
+.pair{position:relative}
+.nt{position:absolute;top:calc(100% + 3px);right:0;width:76px;text-align:center;font-size:10.5px;line-height:1;color:var(--matcha);opacity:.55;pointer-events:none;white-space:nowrap}
+#examsIn .row{padding-bottom:16px}
+.qtxt{background:var(--field);border-radius:12px;padding:10px 14px;color:var(--mute);font-size:13.5px;margin:6px 0 0}
